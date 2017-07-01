@@ -3,8 +3,8 @@ Trabalho 04 da disciplina AED2 - Grafos.
 
 ```sh
 
-$ gcc -c tad*.c
+$ gcc -c tad-*.c
 
-$ gcc main.c -o main tad*.o
+$ gcc main.c -o main tad-*.o
 
 ```

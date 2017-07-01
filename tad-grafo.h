@@ -3,8 +3,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "tad-vetor.h"
 
 #define n
+#define N_VERTICES 6
 
 struct grafo{
 	int v;
@@ -17,6 +19,8 @@ typedef struct grafo* Grafo;
 int** criaMatriz(int linhas, int colunas, int val);
 
 Grafo initGrafo(int v);
+
+void geraGrafoPorConectividade(Grafo G, float conectividade, int autoLoop);
 
 void insereAresta(Grafo G, int vs, int vc);
 

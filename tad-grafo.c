@@ -29,6 +29,7 @@ Grafo initGrafo(int v){
 // Nos exemplos, assumiu que autoLoop é 0.
 void geraGrafoPorConectividade(Grafo G, float conectividade, int autoLoop) {
 	int qtdArestas, qtdVertices;
+	int arestasPorVertice;
 	int verticeInicio, verticeSaida, verticeDestino;
 	int vertices[N_VERTICES];
 
@@ -38,18 +39,15 @@ void geraGrafoPorConectividade(Grafo G, float conectividade, int autoLoop) {
 	geraVetor(vertices, qtdVertices);
 	embaralhaVetor(vertices, qtdVertices);
 
-	// Calcula quantidade de arestas
-	qtdArestas = (G->v) * conectividade;
+	// Calcula quantidade de arestas por vértice
+	arestasPorVertice = (G->v) * conectividade;
 	if (autoLoop == 0) {
-		qtdArestas = (G->v - 1) * conectividade;
+		arestasPorVertice = (G->v - 1) * conectividade;
 	}
+	if (arestasPorVertice == 0) arestasPorVertice++;
 
-	// (*Precisamos discutir sobre isso... se o grau de conectivdade for muito
-	// baixo, a quantidade de arestas é insuficiente para ligar todos os
-	// vértices. Isso aqui faz com que ele tenha a quantidade mínima.*)
-	if (qtdArestas < qtdVertices) {
-		qtdArestas = qtdVertices;
-	}
+	// Calcula quantidade total de arestas
+	qtdArestas = qtdVertices * arestasPorVertice;
 
 	// Salva o vértice inicial e começa distribuir as primeiras arestas a fim de
 	// gerar um grafo conexo.
