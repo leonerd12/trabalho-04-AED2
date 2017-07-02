@@ -121,8 +121,8 @@ void mostraGrafo(Grafo G){
 }
 
 int foiVisitado(int visitados[], int i){
-	for(int a = 0; a < i; a++){
-		if(visitados[a] == i){
+	for (int a = 0; a < i; a++) {
+		if (visitados[a] == i) {
 			return 1;
 		}
 	}
@@ -159,7 +159,7 @@ void BFS(Grafo G, int verticeSaida, int verticeDestino){
 		// mostraFila(aVisitar);
 		vizinho = v->val;
 		visitados[v->val] = 1;
-		if(vizinho == vc){
+		if(vizinho == verticeDestino){
 			printf("\n");
 			return;
 		}
