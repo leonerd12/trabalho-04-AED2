@@ -164,7 +164,7 @@ void BFS(Grafo G, int verticeSaida, int verticeDestino){
 	}
 
 	insereFila(&aVisitar, verticeSaida);
-	printf("%d ", verticeSaida);
+	//printf("%d ", verticeSaida);
 	while(!filaVazia(aVisitar)){
 		v = aVisitar.inicio;
 		int vizinho;
@@ -190,7 +190,7 @@ void BFS(Grafo G, int verticeSaida, int verticeDestino){
 
 		// imprimeVetor(visitados, G->v);
 	}
-	printf("\n");
+	//printf("\n");
 }
 
 
@@ -213,7 +213,7 @@ int DFSprimeiro(Grafo G, int verticeSaida, int verticeDestino, int *visitados) {
 			return 1;
 		}
 		verticeAtual = visitar.topo->elemento;
-		printf("Andei pelo vertice: %d\n", verticeAtual);
+		//printf("Andei pelo vertice: %d\n", verticeAtual);
 		removerPilha(&visitar);
 		visitados[verticeAtual] = 1;
 		for (int i = 0; i < G->vertices; i ++) {
@@ -223,7 +223,7 @@ int DFSprimeiro(Grafo G, int verticeSaida, int verticeDestino, int *visitados) {
 		}
 	}
 
-	printf("Não encontrei!\n");
+	//printf("Não encontrei!\n");
 	return 0;
 }
 
