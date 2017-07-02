@@ -1,5 +1,5 @@
 #include "tad-grafo.h"
-
+#include "tad-fila.h"
 int** criaMatriz(int linhas, int colunas, int val){
 	int i, j;
 	int **m = (int**) malloc(linhas * sizeof(int*)) ;
@@ -28,7 +28,7 @@ Grafo initGrafo(int v){
 // cada vértice possui 2 arestas.
 // Nos exemplos, assumiu que autoLoop é 0.
 void geraGrafoPorConectividade(Grafo G, float conectividade, int autoLoop) {
-	int qtdArestas, qtdVertices;
+	int qtdVertices;
 	int arestasPorVertice;
 	int verticeInicio, verticeSaida, verticeDestino;
 	int vertices[N_VERTICES];
@@ -44,10 +44,6 @@ void geraGrafoPorConectividade(Grafo G, float conectividade, int autoLoop) {
 	if (autoLoop == 0) {
 		arestasPorVertice = (G->v - 1) * conectividade;
 	}
-	if (arestasPorVertice == 0) arestasPorVertice++;
-
-	// Calcula quantidade total de arestas
-	qtdArestas = qtdVertices * arestasPorVertice;
 
 	// Salva o vértice inicial e começa distribuir as primeiras arestas a fim de
 	// gerar um grafo conexo.
@@ -57,18 +53,35 @@ void geraGrafoPorConectividade(Grafo G, float conectividade, int autoLoop) {
 		verticeDestino = vertices[i];
 		G->adj[verticeSaida][verticeDestino] = 1;
 		verticeSaida = verticeDestino;
-		qtdArestas--;
 	}
 	verticeDestino = verticeInicio;
 	G->adj[verticeSaida][verticeDestino] = 1;
-	qtdArestas--;
+	arestasPorVertice--;
 
-	// Caso seja possível gerar mais arestas, elas serão geradas aleatoriamente.
-	while (qtdArestas != 0) {
-		verticeSaida = selecionaChave(vertices, qtdVertices);
-		verticeDestino = selecionaChave(vertices, qtdVertices);
-		G->adj[verticeSaida][verticeDestino] = 1;
-		qtdArestas--;
+	//i = vertice de saida
+	//j = vertice de chegada
+	//k = contador de arestas distribuidas
+	//aux = tamanho do vetor distribuicao
+	//auxVertices = vetor de distribuicao
+	for(int i = 0; i < qtdVertices; i++){ //linha da matriz
+		int aux = 0;
+		int auxVertices[qtdVertices];
+		if(autoLoop == 1){
+			auxVertices[aux] = i;
+			aux++;
+		}
+		for(int j = 0; j < qtdVertices; j++){ //coluna da matriz
+			if(G->adj[i][j] == 0 && i != j){
+				auxVertices[aux] = j;
+				aux++;
+			}
+		}
+		embaralhaVetor(auxVertices, aux);
+		for(int k = 0; k < arestasPorVertice; k++){
+			verticeDestino = auxVertices[k];
+			G->adj[i][verticeDestino] = 1;
+		}
+
 	}
 }
 
@@ -92,7 +105,7 @@ void mostraGrafo(Grafo G){
 		printf("%2d:", vs);
 		for(vc = 0; vc < G->v; vc++){
 			if(G->adj[vs][vc] == 1){
-				printf(" %2d\n", vc);
+				printf(" %2d", vc);
 			}
 		}
 		printf("\n");
@@ -117,4 +130,42 @@ int verticeDisponivel(Grafo G, int vs, int *visitados){
 		}
 	}
 	return -1;
+}
+
+//Busca em Largura (Breadth-First Search)
+void BFS(Grafo G, int vs, int vc){
+	Fila aVisitar;
+	tipoNo *v;
+	int visitados[G->v];
+	initFila(&aVisitar);
+
+	for(int a = 0; a < G->v; a++){
+		visitados[a] = 0;
+	}
+
+	insereFila(&aVisitar, vs);
+	printf("%d ", vs);
+	while(!filaVazia(aVisitar)){
+		v = aVisitar.inicio;
+		int vizinho;
+		// mostraFila(aVisitar);
+		vizinho = v->val;
+		visitados[v->val] = 1;
+
+
+		for(int a = 0; a < G->v; a++){
+			if(visitados[a] == 0){
+				if(G->adj[vizinho][a] == 1){
+					insereFila(&aVisitar, a);
+					printf("%d ", a);
+					visitados[a] = 1;
+				}
+			}
+		}
+
+		removeFila(&aVisitar);
+
+		// imprimeVetor(visitados, G->v);
+	}
+	printf("\n");
 }

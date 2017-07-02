@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "tad-vetor.h"
+#include "tad-fila.h"
 
 #define n
 #define N_VERTICES 6
@@ -31,5 +32,7 @@ void mostraGrafo(Grafo G);
 int foiVisitado(int visitados[], int i);
 
 int verticeDisponivel(Grafo G, int vs, int visitados[]);
+
+void BFS(Grafo G, int vs, int vc);
 
 #endif

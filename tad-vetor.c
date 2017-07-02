@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "tad-vetor.h"
 
 void embaralhaVetor(int vetor[], int tamanho) {
+	srand(time(NULL));
 	int temp, novaPosicao;
 	// Embaralha os valores do vetor
 	for (int i = 0; i < tamanho; i++) {
@@ -27,7 +29,7 @@ void embaralhaVetorFloat(float vetor[], int tamanho) {
 void geraVetor(int vetor[], int tamanho) {
 	// Gera vetor com valores de 1 à 'tamanho'
 	for (int i = 0; i < tamanho; i++) {
-		vetor[i] = i+1;
+		vetor[i] = i;
 	}
 }
 
