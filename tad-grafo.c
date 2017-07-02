@@ -151,7 +151,10 @@ void BFS(Grafo G, int vs, int vc){
 		// mostraFila(aVisitar);
 		vizinho = v->val;
 		visitados[v->val] = 1;
-
+		if(vizinho == vc){
+			printf("\n");
+			return;
+		}
 
 		for(int a = 0; a < G->v; a++){
 			if(visitados[a] == 0){
