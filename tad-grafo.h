@@ -1,38 +1,32 @@
 #ifndef TAD_GRAFO_H
 #define TAD_GRAFO_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "tad-vetor.h"
-#include "tad-fila.h"
-
-#define n
 #define N_VERTICES 6
 
 struct grafo{
-	int v;
-	int a;
-	int **adj;
+	int vertices;
+	int arestas;
+	int **adjacencia;
 };
 
 typedef struct grafo* Grafo;
 
-int** criaMatriz(int linhas, int colunas, int val);
+int** geraMatrizAdjacencia(int dimensao);
 
-Grafo initGrafo(int v);
+Grafo inicializaGrafo(int vertices);
 
 void geraGrafoPorConectividade(Grafo G, float conectividade, int autoLoop);
 
-void insereAresta(Grafo G, int vs, int vc);
+void insereAresta(Grafo G, int verticeSaida, int verticeDestino);
 
-void removeAresta(Grafo G, int vs, int vc);
+void removeAresta(Grafo G, int verticeSaida, int verticeDestino);
 
 void mostraGrafo(Grafo G);
 
 int foiVisitado(int visitados[], int i);
 
-int verticeDisponivel(Grafo G, int vs, int visitados[]);
+int verticeDisponivel(Grafo G, int verticeSaida, int visitados[]);
 
-void BFS(Grafo G, int vs, int vc);
+void BFS(Grafo G, int verticeSaida, int verticeDestino);
 
 #endif

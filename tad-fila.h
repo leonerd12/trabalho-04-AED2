@@ -1,9 +1,6 @@
 #ifndef TAD_FILA_H
 #define TAD_FILA_H
 
-#include <stdio.h>
-#include <stdlib.h>
-
 typedef struct tipoNo{
     int val;
     struct tipoNo *prox;

@@ -5,7 +5,7 @@
 #include "tad-fila.h"
 
 int main(){
-    Grafo G = initGrafo(6);
+    Grafo G = inicializaGrafo(6);
     geraGrafoPorConectividade(G, 0.1, 0);
     mostraGrafo(G);
     BFS(G, 1 , 5);

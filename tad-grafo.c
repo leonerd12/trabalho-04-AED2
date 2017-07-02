@@ -1,20 +1,22 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include "tad-grafo.h"
+#include "tad-vetor.h"
 #include "tad-fila.h"
-int** criaMatriz(int linhas, int colunas, int val){
-	int i, j;
-	int **m = (int**) malloc(linhas * sizeof(int*)) ;
-	for (i = 0; i < linhas; i++) {
-		m[i] = (int*) malloc(colunas * sizeof(int));
-	}
 
-	return m;
+int** geraMatrizAdjacencia(int dimensao) {
+	int **matriz = (int**) malloc(dimensao * sizeof(int*)) ;
+	for (int i = 0; i < dimensao; i++) {
+		matriz[i] = (int*) malloc(dimensao * sizeof(int));
+	}
+	return matriz;
 }
 
-Grafo initGrafo(int v){
+Grafo inicializaGrafo(int vertices) {
 	Grafo G = (Grafo) malloc(sizeof(Grafo));
-	G->v = v;
-	G->a = 0;
-	G->adj = criaMatriz(v,v,0);
+	G->vertices = vertices;
+	G->arestas = 0;
+	G->adjacencia = geraMatrizAdjacencia(vertices);
 	return G;
 }
 
@@ -33,16 +35,16 @@ void geraGrafoPorConectividade(Grafo G, float conectividade, int autoLoop) {
 	int verticeInicio, verticeSaida, verticeDestino;
 	int vertices[N_VERTICES];
 
-	qtdVertices = G->v;
+	qtdVertices = G->vertices;
 
 	// Cria uma cópia dos vértices do Grafo e os embaralha.
 	geraVetor(vertices, qtdVertices);
 	embaralhaVetor(vertices, qtdVertices);
 
 	// Calcula quantidade de arestas por vértice
-	arestasPorVertice = (G->v) * conectividade;
+	arestasPorVertice = (G->vertices) * conectividade;
 	if (autoLoop == 0) {
-		arestasPorVertice = (G->v - 1) * conectividade;
+		arestasPorVertice = (G->vertices - 1) * conectividade;
 	}
 
 	// Salva o vértice inicial e começa distribuir as primeiras arestas a fim de
@@ -51,61 +53,67 @@ void geraGrafoPorConectividade(Grafo G, float conectividade, int autoLoop) {
 	verticeSaida = verticeInicio;
 	for (int i = 1; i < qtdVertices; i++) {
 		verticeDestino = vertices[i];
-		G->adj[verticeSaida][verticeDestino] = 1;
+		insereAresta(G, verticeSaida, verticeDestino);
 		verticeSaida = verticeDestino;
 	}
 	verticeDestino = verticeInicio;
-	G->adj[verticeSaida][verticeDestino] = 1;
+	insereAresta(G, verticeSaida, verticeDestino);
 	arestasPorVertice--;
 
-	//i = vertice de saida
-	//j = vertice de chegada
-	//k = contador de arestas distribuidas
-	//aux = tamanho do vetor distribuicao
-	//auxVertices = vetor de distribuicao
-	for(int i = 0; i < qtdVertices; i++){ //linha da matriz
-		int aux = 0;
-		int auxVertices[qtdVertices];
-		if(autoLoop == 1){
-			auxVertices[aux] = i;
-			aux++;
+	// Se não precisar mais disbribuir vértices, a função já é finalizada.
+	if (arestasPorVertice == 0) return;
+
+	// Distribui o restante das arestas de cada vértice aleatoriamente.
+	for (int i = 0; i < qtdVertices; i++) {
+		int verticesDistribuicao[qtdVertices];
+		int contDistribuicao = 0;
+
+		// Se autoLoop for permitido, o vértice pode ser distribuído
+		if (autoLoop == 1){
+			verticesDistribuicao[contDistribuicao] = i;
+			contDistribuicao++;
 		}
-		for(int j = 0; j < qtdVertices; j++){ //coluna da matriz
-			if(G->adj[i][j] == 0 && i != j){
-				auxVertices[aux] = j;
-				aux++;
+
+		// Coleta todos os vértices que ainda não foram ligados p/ distribuição
+		for (int j = 0; j < qtdVertices; j++) {
+			if(G->adjacencia[i][j] == 0 && i != j) {
+				verticesDistribuicao[contDistribuicao] = j;
+				contDistribuicao++;
 			}
 		}
-		embaralhaVetor(auxVertices, aux);
-		for(int k = 0; k < arestasPorVertice; k++){
-			verticeDestino = auxVertices[k];
-			G->adj[i][verticeDestino] = 1;
+
+		// Embaralha os vértices para disbribuir aleatoriamente.
+		embaralhaVetor(verticesDistribuicao, contDistribuicao);
+
+		// Cria as adjacências a partir dos vértices de distribuição.
+		verticeSaida = i;
+		for (int j = 0; j < arestasPorVertice; j++) {
+			insereAresta(G, verticeSaida, verticesDistribuicao[j]);
 		}
-
 	}
 }
 
-void insereAresta(Grafo G, int vs, int vc){
-	if(G->adj[vs][vc] == 0){
-		G->adj[vs][vc] = 1;
-		G->a++;
+void insereAresta(Grafo G, int verticeSaida, int verticeDestino){
+	if(G->adjacencia[verticeSaida][verticeDestino] == 0){
+		G->adjacencia[verticeSaida][verticeDestino] = 1;
+		G->arestas++;
 	}
 }
 
-void removeAresta(Grafo G, int vs, int vc){
-	if(G->adj[vs][vc] == 1){
-		G->adj[vs][vc] = 0;
-		G->a--;
+void removeAresta(Grafo G, int verticeSaida, int verticeDestino){
+	if(G->adjacencia[verticeSaida][verticeDestino] == 1){
+		G->adjacencia[verticeSaida][verticeDestino] = 0;
+		G->arestas--;
 	}
 }
 
 void mostraGrafo(Grafo G){
-	int vs, vc;
-	for(vs = 0; vs < G->v; vs++){
-		printf("%2d:", vs);
-		for(vc = 0; vc < G->v; vc++){
-			if(G->adj[vs][vc] == 1){
-				printf(" %2d", vc);
+	int verticeSaida, verticeDestino;
+	for(verticeSaida = 0; verticeSaida < G->vertices; verticeSaida++){
+		printf("%2d:", verticeSaida);
+		for(verticeDestino = 0; verticeDestino < G->vertices; verticeDestino++){
+			if(G->adjacencia[verticeSaida][verticeDestino] == 1){
+				printf(" %2d", verticeDestino);
 			}
 		}
 		printf("\n");
@@ -121,9 +129,9 @@ int foiVisitado(int visitados[], int i){
 	return 0;
 }
 
-int verticeDisponivel(Grafo G, int vs, int *visitados){
-	for(int i = 0; i < G->v; i++){
-		if(G->adj[vs][i] == 1){
+int verticeDisponivel(Grafo G, int verticeSaida, int *visitados){
+	for(int i = 0; i < G->vertices; i++){
+		if(G->adjacencia[verticeSaida][i] == 1){
 			if(foiVisitado(visitados, i) == 0){
 				return i;
 			}
@@ -133,18 +141,18 @@ int verticeDisponivel(Grafo G, int vs, int *visitados){
 }
 
 //Busca em Largura (Breadth-First Search)
-void BFS(Grafo G, int vs, int vc){
+void BFS(Grafo G, int verticeSaida, int verticeDestino){
 	Fila aVisitar;
 	tipoNo *v;
-	int visitados[G->v];
+	int visitados[G->vertices];
 	initFila(&aVisitar);
 
-	for(int a = 0; a < G->v; a++){
+	for(int a = 0; a < G->vertices; a++){
 		visitados[a] = 0;
 	}
 
-	insereFila(&aVisitar, vs);
-	printf("%d ", vs);
+	insereFila(&aVisitar, verticeSaida);
+	printf("%d ", verticeSaida);
 	while(!filaVazia(aVisitar)){
 		v = aVisitar.inicio;
 		int vizinho;
@@ -153,9 +161,9 @@ void BFS(Grafo G, int vs, int vc){
 		visitados[v->val] = 1;
 
 
-		for(int a = 0; a < G->v; a++){
+		for(int a = 0; a < G->vertices; a++){
 			if(visitados[a] == 0){
-				if(G->adj[vizinho][a] == 1){
+				if(G->adjacencia[vizinho][a] == 1){
 					insereFila(&aVisitar, a);
 					printf("%d ", a);
 					visitados[a] = 1;

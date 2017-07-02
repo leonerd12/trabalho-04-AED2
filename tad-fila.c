@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include "tad-fila.h"
 
 void initFila(Fila *f){
