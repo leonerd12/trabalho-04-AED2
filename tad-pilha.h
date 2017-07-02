@@ -1,21 +1,24 @@
+#ifndef TADPILHA_H
 #include <stdio.h>
 #include <stdlib.h>
 
 typedef struct tipoNop {
     int elemento;
     struct tipoNop *prox;
-} tipoNo;
+} tipoNop;
 
 typedef struct Pilha{
-    tipoNo *topo;
-} tipoPilha;
+    tipoNop *topo;
+} Pilha;
 
-void criarPilha(tipoPilha *pilha);
+void criarPilha(Pilha *pilha);
 
 int pilhaVazia(Pilha pilha);
 
-void inserirPilha(tipoPilha *pilha, tipoDados dado);
+void inserirPilha(Pilha *pilha, int dado);
 
 void removerPilha(Pilha *pilha);
 
 void mostraPilha(Pilha pilha);
+
+#endif

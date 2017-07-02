@@ -29,4 +29,8 @@ int verticeDisponivel(Grafo G, int verticeSaida, int visitados[]);
 
 void BFS(Grafo G, int verticeSaida, int verticeDestino);
 
+void DFS(Grafo G, int verticeSaida, int verticeDestino);
+
+int DFSprimeiro(Grafo G, int verticeSaida, int verticeDestino, int *visitados);
+
 #endif

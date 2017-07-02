@@ -3,20 +3,32 @@
 #include "tad-grafo.h"
 #include "tad-vetor.h"
 #include "tad-fila.h"
+#include "tad-pilha.h"
 
 int** geraMatrizAdjacencia(int dimensao) {
 	int **matriz = (int**) malloc(dimensao * sizeof(int*)) ;
 	for (int i = 0; i < dimensao; i++) {
 		matriz[i] = (int*) malloc(dimensao * sizeof(int));
 	}
+
+	int i, j;
+
+	for (i = 0; i < dimensao; i ++) {
+		for (j = 0; j < dimensao; j++) {
+			matriz[i][j] = 0;
+		}
+	}
+
 	return matriz;
 }
 
 Grafo inicializaGrafo(int vertices) {
+
 	Grafo G = (Grafo) malloc(sizeof(Grafo));
 	G->vertices = vertices;
 	G->arestas = 0;
 	G->adjacencia = geraMatrizAdjacencia(vertices);
+
 	return G;
 }
 
@@ -179,4 +191,38 @@ void BFS(Grafo G, int verticeSaida, int verticeDestino){
 		// imprimeVetor(visitados, G->v);
 	}
 	printf("\n");
+}
+
+
+void DFS(Grafo G, int verticeSaida, int verticeDestino) {
+	int visitados[G->vertices];
+	for (int i = 0; i < G->vertices; i++) {
+		visitados[i] = 0;
+	}
+	DFSprimeiro(G,verticeSaida,verticeDestino,visitados);
+}
+
+int DFSprimeiro(Grafo G, int verticeSaida, int verticeDestino, int *visitados) {
+	Pilha visitar;
+	//tipoNop* aux;
+	int verticeAtual;
+	criarPilha(&visitar);
+	inserirPilha(&visitar, verticeSaida);
+	while(visitar.topo) {
+		if (verticeAtual == verticeDestino) {
+			return 1;
+		}
+		verticeAtual = visitar.topo->elemento;
+		printf("Andei pelo vertice: %d\n", verticeAtual);
+		removerPilha(&visitar);
+		visitados[verticeAtual] = 1;
+		for (int i = 0; i < G->vertices; i ++) {
+			if(G->adjacencia[verticeAtual][i] == 1 && verticeAtual != i && visitados[i] != 1) {
+				inserirPilha(&visitar, i);
+			}
+		}
+	}
+
+	printf("Não encontrei!\n");
+	return 0;
 }
