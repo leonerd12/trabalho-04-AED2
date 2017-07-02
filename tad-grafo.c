@@ -159,7 +159,10 @@ void BFS(Grafo G, int verticeSaida, int verticeDestino){
 		// mostraFila(aVisitar);
 		vizinho = v->val;
 		visitados[v->val] = 1;
-
+		if(vizinho == vc){
+			printf("\n");
+			return;
+		}
 
 		for(int a = 0; a < G->vertices; a++){
 			if(visitados[a] == 0){
