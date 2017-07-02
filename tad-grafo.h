@@ -1,8 +1,6 @@
 #ifndef TAD_GRAFO_H
 #define TAD_GRAFO_H
 
-#define N_VERTICES 6
-
 struct grafo{
 	int vertices;
 	int arestas;
@@ -32,5 +30,9 @@ void BFS(Grafo G, int verticeSaida, int verticeDestino);
 void DFS(Grafo G, int verticeSaida, int verticeDestino);
 
 int DFSprimeiro(Grafo G, int verticeSaida, int verticeDestino, int *visitados);
+
+void percorreTudo(Grafo G, int verticeSaida);
+
+void percorreTudoInterno(Grafo G, int verticeSaida, int *visitados);
 
 #endif

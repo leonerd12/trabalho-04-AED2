@@ -45,7 +45,7 @@ void geraGrafoPorConectividade(Grafo G, float conectividade, int autoLoop) {
 	int qtdVertices;
 	int arestasPorVertice;
 	int verticeInicio, verticeSaida, verticeDestino;
-	int vertices[N_VERTICES];
+	int vertices[G->vertices];
 
 	qtdVertices = G->vertices;
 
@@ -225,4 +225,32 @@ int DFSprimeiro(Grafo G, int verticeSaida, int verticeDestino, int *visitados) {
 
 	printf("Não encontrei!\n");
 	return 0;
+}
+
+void percorreTudo(Grafo G, int verticeSaida) {
+	int visitados[G->vertices];
+	for (int i = 0; i < G->vertices; i++) {
+		visitados[i] = 0;
+	}
+	percorreTudoInterno(G,verticeSaida,visitados);
+}
+
+void percorreTudoInterno(Grafo G, int verticeSaida, int *visitados) {
+	Pilha visitar;
+	//tipoNop* aux;
+	int verticeAtual;
+	criarPilha(&visitar);
+	inserirPilha(&visitar, verticeSaida);
+	while(visitar.topo) {
+		verticeAtual = visitar.topo->elemento;
+		if(visitados[verticeAtual] != 1) printf("Andei pelo vértice: %d\n", verticeAtual);
+		removerPilha(&visitar);
+		visitados[verticeAtual] = 1;
+		for (int i = 0; i < G->vertices; i ++) {
+			if(G->adjacencia[verticeAtual][i] == 1 && verticeAtual != i && visitados[i] != 1) {
+				inserirPilha(&visitar, i);
+			}
+		}
+	}
+
 }
