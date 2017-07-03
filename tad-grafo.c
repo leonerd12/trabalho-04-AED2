@@ -227,6 +227,24 @@ int DFSprimeiro(Grafo G, int verticeSaida, int verticeDestino, int *visitados) {
 	return 0;
 }
 
+void DFSRecursivo(Grafo G, int vertice){
+	int visitados[G->vertices];
+	for(int a = 0; a < G->vertices; a++){
+		visitados[a] = 0;
+	}
+	chamaDFSrecursivo(G, visitados, G->vertices, vertice);
+}
+
+void chamaDFSrecursivo(Grafo G, int visitados[], int numVertices, int vertice){
+	// printf("%d\n", vertice);
+	visitados[vertice] = 1;
+	for(int verticeChegada = 0; verticeChegada < numVertices; verticeChegada++){
+		if(!visitados[verticeChegada] && (G->adjacencia[vertice][verticeChegada] == 1)){
+			chamaDFSrecursivo(G, visitados, numVertices, verticeChegada);
+		}
+	}
+}
+
 void percorreTudo(Grafo G, int verticeSaida) {
 	int visitados[G->vertices];
 	for (int i = 0; i < G->vertices; i++) {
@@ -253,4 +271,43 @@ void percorreTudoInterno(Grafo G, int verticeSaida, int *visitados) {
 		}
 	}
 
+}
+
+void todosOsCaminhos(Grafo G, int verticeSaida, int verticeChegada){
+	int visitados[G->vertices];
+	int caminho[G->vertices];
+	int caminhoInicio = 0;
+
+	for (int i = 0; i < G->vertices; i++) {
+		visitados[i] = 0;
+	}
+
+	mostrarTodosOsCaminhos(G, G->vertices, verticeSaida, verticeChegada, visitados, caminho, caminhoInicio);
+}
+
+void mostrarTodosOsCaminhos(Grafo G, int numVertices, int verticeSaida, int verticeChegada, int visitados[], int caminho[], int caminhoInicio) {
+	//Marcar o vertice atual como visitado
+	visitados[verticeSaida] = 1;
+
+	caminho[caminhoInicio] = verticeSaida;
+	caminhoInicio++;
+
+	//Se o verticeChegada = verticeSaida, então imprima o vetor caminho atual
+	if (verticeSaida == verticeChegada) {
+		for(int a = 0; a < caminhoInicio; a++){
+			printf("%d ", caminho[a]);
+		}
+		printf("\n");
+	}else{ //Se o verticeChegada for diferente do verticeSaida
+		//mostrarTodosOscaminho para o vertice atual
+		for(int a = 0; a < numVertices; a++){
+			if((!visitados[a]) && (G->adjacencia[verticeSaida][a] == 1)){
+				mostrarTodosOsCaminhos(G, numVertices, a, verticeChegada, visitados, caminho, caminhoInicio);
+			}
+		}
+	}
+
+	//remove o vertice atual dos caminho e marque como não-visitado
+	caminhoInicio--;
+	visitados[verticeSaida] = 0;
 }

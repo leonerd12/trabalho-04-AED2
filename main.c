@@ -8,7 +8,7 @@
 
 int main(){
     clock_t start;
-    double tempoBFS = 0, tempoDFS = 0;
+    double tempoBFS = 0, tempoDFS = 0, tempoDFSrecursivo = 0;
     Grafo G = inicializaGrafo(N_VERTICES1);
     geraGrafoPorConectividade(G, 0.25, 0);
     mostraGrafo(G);
@@ -30,5 +30,21 @@ int main(){
         DFS(G1, 0, N_VERTICES1);
         tempoDFS = (clock() - start) / (double) CLOCKS_PER_SEC;
         printf("Tempo DFS (Busca em Profundidade): %0.15lf\n", tempoDFS);
+        start = clock();
+        DFSRecursivo(G1, 1);
+        tempoDFSrecursivo = (clock() - start) / (double) CLOCKS_PER_SEC;
+        printf("Tempo DFS Recursivo (Busca em Profundidade): %0.15lf\n", tempoDFS);
     }
+
+    printf("--------------- QUESTÃO 3 ---------------\n");
+    Grafo G2 = inicializaGrafo(5);
+    geraGrafoPorConectividade(G2, 0.5, 0);
+    mostraGrafo(G2);
+    int vs, vc;
+    printf("Digite o vértice de saída: ");
+    scanf("%d", &vs);
+    printf("Digite o vértice de chegada: ");
+    scanf("%d", &vc);
+    printf("Todos os caminhos entre os vértices %d e %d: \n", vs, vc);
+    todosOsCaminhos(G2, vs, vc);
 }

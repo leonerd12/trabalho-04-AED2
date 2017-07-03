@@ -31,8 +31,16 @@ void DFS(Grafo G, int verticeSaida, int verticeDestino);
 
 int DFSprimeiro(Grafo G, int verticeSaida, int verticeDestino, int *visitados);
 
+void DFSRecursivo(Grafo G, int vertice);
+
+void chamaDFSrecursivo(Grafo G, int visitados[], int numVertices, int vertice);
+
 void percorreTudo(Grafo G, int verticeSaida);
 
 void percorreTudoInterno(Grafo G, int verticeSaida, int *visitados);
+
+void todosOsCaminhos(Grafo G, int verticeSaida, int verticeChegada);
+
+void mostrarTodosOsCaminhos(Grafo G, int numVertices, int verticeSaida, int verticeChegada, int visitados[], int caminho[], int caminhoInicio) ;
 
 #endif
