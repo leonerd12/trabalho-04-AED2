@@ -4,7 +4,7 @@
 #include "tad-vetor.h"
 
 void embaralhaVetor(int vetor[], int tamanho) {
-	srand(time(NULL));
+	// srand(time(NULL));
 	int temp, novaPosicao;
 	// Embaralha os valores do vetor
 	for (int i = 0; i < tamanho; i++) {

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include "tad-grafo.h"
 #include "tad-vetor.h"
 #include "tad-fila.h"
@@ -41,68 +42,109 @@ Grafo inicializaGrafo(int vertices) {
 // Ex.2: Existem 5 vértices, e o grau de conectivdade é 0.5 (50%), logo,
 // cada vértice possui 2 arestas.
 // Nos exemplos, assumiu que autoLoop é 0.
+// 10 vértices -> 100 arestas (autoLoop)
+// 10 vértices -> 90 arestas
 void geraGrafoPorConectividade(Grafo G, float conectividade, int autoLoop) {
-	int qtdVertices;
-	int arestasPorVertice;
+	int qtdVertices, qtdArestas;
 	int verticeInicio, verticeSaida, verticeDestino;
 	int vertices[G->vertices];
+	int distribuidos, atual;
 
 	qtdVertices = G->vertices;
 
-	// Cria uma cópia dos vértices do Grafo e os embaralha.
+	// Calcula a quantidade de arestas a ser distribuido.
+	qtdArestas = qtdVertices * qtdVertices * conectividade;
+	if (!autoLoop) {
+		qtdArestas = (qtdVertices - 1) * qtdVertices * conectividade;
+	}
+	G->arestas = qtdArestas;
+
+	if (qtdArestas < qtdVertices) {
+		printf(">> O grau de conectividade é muito baixo para gerar um grafo conexo.");
+		return;
+	}
+
+	// Cria uma cópia dos vértices e os embaralha.
 	geraVetor(vertices, qtdVertices);
 	embaralhaVetor(vertices, qtdVertices);
 
-	// Calcula quantidade de arestas por vértice
-	arestasPorVertice = (G->vertices) * conectividade;
-	if (autoLoop == 0) {
-		arestasPorVertice = (G->vertices - 1) * conectividade;
-	}
-
-	// Salva o vértice inicial e começa distribuir as primeiras arestas a fim de
-	// gerar um grafo conexo.
+	// Salva o vértice inicial e começa a distribuir as primeiras arestas a fim
+	// de gerar um grafo conexo base.
 	verticeInicio = vertices[0];
 	verticeSaida = verticeInicio;
 	for (int i = 1; i < qtdVertices; i++) {
 		verticeDestino = vertices[i];
 		insereAresta(G, verticeSaida, verticeDestino);
 		verticeSaida = verticeDestino;
+		qtdArestas--;
 	}
-	verticeDestino = verticeInicio;
-	insereAresta(G, verticeSaida, verticeDestino);
-	arestasPorVertice--;
+	insereAresta(G, verticeSaida, verticeInicio);
+	qtdArestas--;
 
-	// Se não precisar mais disbribuir vértices, a função já é finalizada.
-	if (arestasPorVertice == 0) return;
-
-	// Distribui o restante das arestas de cada vértice aleatoriamente.
-	for (int i = 0; i < qtdVertices; i++) {
-		int verticesDistribuicao[qtdVertices];
-		int contDistribuicao = 0;
-
-		// Se autoLoop for permitido, o vértice pode ser distribuído
-		if (autoLoop == 1){
-			verticesDistribuicao[contDistribuicao] = i;
-			contDistribuicao++;
+	// Se ainda houverem arestas p/ distribuir, elas serão distribuidas
+	// igualmente.
+	atual = 0;
+	while (qtdArestas > 0) {
+		// Cria uma cópia dos vértices do Grafo e os embaralha quando não há
+		// mais vértices para distribuir.
+		if (atual == qtdVertices - 1) {
+			geraVetor(vertices, qtdVertices);
+			embaralhaVetor(vertices, qtdVertices);
+			atual = 0;
 		}
-
-		// Coleta todos os vértices que ainda não foram ligados p/ distribuição
-		for (int j = 0; j < qtdVertices; j++) {
-			if(G->adjacencia[i][j] == 0 && i != j) {
-				verticesDistribuicao[contDistribuicao] = j;
-				contDistribuicao++;
-			}
-		}
-
-		// Embaralha os vértices para disbribuir aleatoriamente.
-		embaralhaVetor(verticesDistribuicao, contDistribuicao);
-
-		// Cria as adjacências a partir dos vértices de distribuição.
-		verticeSaida = i;
-		for (int j = 0; j < arestasPorVertice; j++) {
-			insereAresta(G, verticeSaida, verticesDistribuicao[j]);
-		}
+		// Cria adjacência
+		verticeSaida = vertices[atual];
+		verticeDestino = vertices[atual+1];
+		insereAresta(G, verticeSaida, verticeDestino);
+		// imprimeVetor(vertices, qtdVertices);
+		atual++;
+		qtdArestas--;
 	}
+
+	// // Salva o vértice inicial e começa distribuir as primeiras arestas a fim de
+	// // gerar um grafo conexo.
+	// verticeInicio = vertices[0];
+	// verticeSaida = verticeInicio;
+	// for (int i = 1; i < qtdVertices; i++) {
+	// 	verticeDestino = vertices[i];
+	// 	insereAresta(G, verticeSaida, verticeDestino);
+	// 	verticeSaida = verticeDestino;
+	// }
+	// verticeDestino = verticeInicio;
+	// insereAresta(G, verticeSaida, verticeDestino);
+	// arestasPorVertice--;
+	//
+	// // Se não precisar mais disbribuir vértices, a função já é finalizada.
+	// if (arestasPorVertice == 0) return;
+	//
+	// // Distribui o restante das arestas de cada vértice aleatoriamente.
+	// for (int i = 0; i < qtdVertices; i++) {
+	// 	int verticesDistribuicao[qtdVertices];
+	// 	int contDistribuicao = 0;
+	//
+	// 	// Se autoLoop for permitido, o vértice pode ser distribuído
+	// 	if (autoLoop == 1){
+	// 		verticesDistribuicao[contDistribuicao] = i;
+	// 		contDistribuicao++;
+	// 	}
+	//
+	// 	// Coleta todos os vértices que ainda não foram ligados p/ distribuição
+	// 	for (int j = 0; j < qtdVertices; j++) {
+	// 		if(G->adjacencia[i][j] == 0 && i != j) {
+	// 			verticesDistribuicao[contDistribuicao] = j;
+	// 			contDistribuicao++;
+	// 		}
+	// 	}
+	//
+	// 	// Embaralha os vértices para disbribuir aleatoriamente.
+	// 	embaralhaVetor(verticesDistribuicao, contDistribuicao);
+	//
+	// 	// Cria as adjacências a partir dos vértices de distribuição.
+	// 	verticeSaida = i;
+	// 	for (int j = 0; j < arestasPorVertice; j++) {
+	// 		insereAresta(G, verticeSaida, verticesDistribuicao[j]);
+	// 	}
+	// }
 }
 
 void insereAresta(Grafo G, int verticeSaida, int verticeDestino){
